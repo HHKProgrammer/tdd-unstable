@@ -4,20 +4,24 @@ import pg from "pg";
 export class PostgresUserDao {
   static instance;
 
-  static getInstance() {
+  static getInstance(dbClient = null) {
     if (!this.instance) {
-      this.instance = new PostgresUserDao();
+      this.instance = new PostgresUserDao(dbClient);
     }
     return this.instance;
   }
 
-  db = new pg.Pool({
-    user: process.env.PGUSER,
-    host: process.env.PGHOST,
-    database: process.env.PGDATABASE,
-    password: process.env.PGPASSWORD,
-    port: process.env.PGPORT,
-  });
+
+  constructor(dbClient = null) {
+    this.db = dbClient || new pg.Pool({
+      db = new pg.Pool({
+        user: process.env.PGUSER,
+        host: process.env.PGHOST,
+        database: process.env.PGDATABASE,
+        password: process.env.PGPASSWORD,
+        port: process.env.PGPORT,
+      });
+    }
 
   close() {
     this.db.end();
@@ -49,11 +53,12 @@ export class PostgresUserDao {
 }
 
 export class PasswordService {
-  users = PostgresUserDao.getInstance();
-
+  constructor(users = PostgresUserDao.getInstance()) {
+    this.users = users;
+  }
   async changePassword(userId, oldPassword, newPassword) {
     const user = await this.users.getById(userId);
-    if (!argon2.verifySync(user.passwordHash, oldPassword)) {
+    if (!user || !(await argon2.verify(user.passwordHash, oldPassword))) {
       throw new Error("wrong old password");
     }
     user.passwordHash = argon2.hashSync(newPassword);
