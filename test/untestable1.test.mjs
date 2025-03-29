@@ -16,4 +16,9 @@ describe("Untestable 1: days until Christmas", () => {
     const result = daysUntilChristmas(mockDate);
     expect(result).to.equal(0); // today so 0 days left
   });
+  test("Calculates days correctly when after Christmas", () => {
+    const mockDate = new Date("2025-12-26"); // 1 day after christmas
+    const result = daysUntilChristmas(mockDate);
+    expect(result).to.equal(364); // 364  until the next christmas
+  });
 });
