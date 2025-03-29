@@ -77,4 +77,15 @@ describe("Untestable 4: enterprise application", () => {
 
     await expect(service.changePassword(userId, oldPassword, newPassword)).rejects.toThrow("wrong old password");
   });
+  test("Throws error when user is not found", async () => {
+    const userId = "nonExistentUser";
+    const oldPassword = "somePassword";
+    const newPassword = "newPassword";
+
+    mockDbClient.query.mockResolvedValueOnce({ rows: [] });
+
+    await expect(service.changePassword(userId, oldPassword, newPassword))
+        .rejects.toThrow("wrong old password");
+  });
+
 });
