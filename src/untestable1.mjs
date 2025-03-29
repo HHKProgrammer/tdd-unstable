@@ -9,5 +9,5 @@ export function daysUntilChristmas(today = new Date()) {
     christmasDay.setFullYear(year + 1);
   }
   const diff = christmasDay - today;
-  return Math.floor(diff / millisPerDay);
+  return Math.ceil(diff / millisPerDay);//math floor is wrong here
 }
