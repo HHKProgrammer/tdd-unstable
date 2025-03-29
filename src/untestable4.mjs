@@ -14,7 +14,6 @@ export class PostgresUserDao {
 
   constructor(dbClient = null) {
     this.db = dbClient || new pg.Pool({
-      db = new pg.Pool({
         user: process.env.PGUSER,
         host: process.env.PGHOST,
         database: process.env.PGDATABASE,
@@ -61,7 +60,7 @@ export class PasswordService {
     if (!user || !(await argon2.verify(user.passwordHash, oldPassword))) {
       throw new Error("wrong old password");
     }
-    user.passwordHash = argon2.hashSync(newPassword);
+    user.passwordHash = await argon2.hash(newPassword);
     await this.users.save(user);
   }
 }
