@@ -14,4 +14,19 @@ describe("Untestable 2: a dice game", () => {
     const result = diceHandValue(mockRandom);
     expect(result).to.equal(104); // 100 + 4 (pair)
   });
+  test("Returns correct value when dice roll different numbers", () => {
+    let toggle = false;
+    const mockRandom = () => {
+      toggle = !toggle;
+      return toggle ? 0.3 : 0.8; // 3 , 5
+      //0.4 is  3 Math.floor(0.4 * 6 + 1)  = 3
+      //
+      // 0.8 is 5 Math.floor(0.8 * 6 + 1) = 5
+    };
+
+    const result = diceHandValue(mockRandom);
+    expect(result).to.equal(5); // highest die is 5
+  });
+
+
 });
