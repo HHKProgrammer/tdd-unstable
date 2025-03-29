@@ -1,8 +1,8 @@
 import { readFile } from "node:fs/promises";
 import { parse } from "csv-parse/sync";
 
-export async function parsePeopleCsv(filePath) {
-  const csvData = await readFile(filePath, { encoding: "utf8" });
+// Parse CSV from string
+export function parsePeopleCsvFromString(csvData) {
   const records = parse(csvData, {
     skip_empty_lines: true,
     trim: true,
@@ -11,11 +11,17 @@ export async function parsePeopleCsv(filePath) {
     const person = {
       firstName,
       lastName,
-      gender: gender.charAt(0).toLowerCase(),
+      gender: gender ? gender.charAt(0).toLowerCase() : undefined,
     };
     if (age !== "") {
       person.age = parseInt(age);
     }
     return person;
   });
+}
+
+// Parse CSV from file
+export async function parsePeopleCsv(filePath) {
+  const csvData = await readFile(filePath, { encoding: "utf8" });
+  return parsePeopleCsvFromString(csvData);
 }
